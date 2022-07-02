@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "malthermal:block/thermal_tank_frame"
+  }
+}
