@@ -8,7 +8,7 @@ import net.minecraft.world.IBlockReader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class IronThermalTankCore extends AbstractThermalTankCore{
+public class IronThermalTankCore extends AbstractThermalTankCore {
     protected IronThermalTankCore() {
         super(Properties.of(Material.METAL));
     }

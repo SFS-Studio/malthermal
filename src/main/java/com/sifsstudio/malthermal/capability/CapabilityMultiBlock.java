@@ -10,7 +10,8 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class CapabilityMultiBlock {

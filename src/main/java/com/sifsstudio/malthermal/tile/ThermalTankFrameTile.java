@@ -14,6 +14,10 @@ public class ThermalTankFrameTile extends BaseTile {
 
     private int structureId = -1;
 
+    public ThermalTankFrameTile() {
+        super(TileEntities.THERMAL_TANK_FRAME.get());
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -23,6 +27,7 @@ public class ThermalTankFrameTile extends BaseTile {
                 public int getId() {
                     return structureId;
                 }
+
                 @Override
                 public void setId(int id) {
                     structureId = id;
@@ -43,10 +48,6 @@ public class ThermalTankFrameTile extends BaseTile {
     public void deserializeNBT(CompoundNBT nbt) {
         this.structureId = nbt.getInt("structureId");
         super.deserializeNBT(nbt);
-    }
-
-    public ThermalTankFrameTile() {
-        super(TileEntities.THERMAL_TANK_FRAME.get());
     }
 
     @Override

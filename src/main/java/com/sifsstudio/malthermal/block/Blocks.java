@@ -23,13 +23,13 @@ public class Blocks {
         BLOCK_ITEMS.register(bus);
     }
 
-    private static <I extends Block>  RegistryObject<Block> registerWithItem(String name, Supplier<? extends I> supplier) {
+    private static <I extends Block> RegistryObject<Block> registerWithItem(String name, Supplier<? extends I> supplier) {
         RegistryObject<Block> block = BLOCKS.register(name, supplier);
         BLOCK_ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
         return block;
     }
 
-    private static <I extends Block>  RegistryObject<Block> registerWithItem(String name, Supplier<? extends I> supplier, Item.Properties props) {
+    private static <I extends Block> RegistryObject<Block> registerWithItem(String name, Supplier<? extends I> supplier, Item.Properties props) {
         RegistryObject<Block> block = BLOCKS.register(name, supplier);
         BLOCK_ITEMS.register(name, () -> new BlockItem(block.get(), props));
         return block;
