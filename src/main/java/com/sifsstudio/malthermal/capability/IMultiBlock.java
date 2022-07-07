@@ -9,29 +9,50 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public interface IMultiBlock {
 
+    Collection<MultiBlock> getMultiBlocks();
+
+    MultiBlock getMultiBlockById(int id);
+
+    void setMultiBlock(int id, MultiBlock multiBlock);
+
+    void removeMultiBlock(int id);
+
+    void clear();
+
+    default int getAvailableId() {
+        return this.getMultiBlocks().stream().max(Comparator.comparingInt(multiBlock -> multiBlock.id)).map(MultiBlock::getId).orElse(-1) + 1;
+    }
+
+    default void addMultiBlock(BlockPos controller, List<BlockPos> blocks, MultiBlockType<?> type) {
+        int id = this.getAvailableId();
+        this.setMultiBlock(id, new MultiBlock(id, blocks, controller, type));
+    }
+
     class MultiBlock {
         private final int id;
         private final List<BlockPos> blocks;
-        private final MultiBlockType type;
+        private final BlockPos controller;
+        private final MultiBlockType<?> type;
 
-        public MultiBlock(int id, MultiBlockType type) {
+        private MultiBlock(int id, List<BlockPos> blocks, BlockPos controller, MultiBlockType<?> type) {
             this.id = id;
-            this.blocks = new ArrayList<>();
+            this.blocks = blocks;
+            this.controller = controller;
             this.type = type;
         }
 
-        private MultiBlock(int id, List<BlockPos> blocks, MultiBlockType type) {
-            this.id = id;
-            this.blocks = blocks;
-            this.type = type;
+        public static MultiBlock deserializeNBT(CompoundNBT compound) {
+            List<BlockPos> blocks = new ArrayList<>();
+            ListNBT list = compound.getList("blocks", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                blocks.add(i, NBTUtil.readBlockPos(list.getCompound(i)));
+            }
+            return new MultiBlock(compound.getInt("id"), blocks, NBTUtil.readBlockPos(compound.getCompound("controller")), Registries.MULTI_BLOCK_TYPE.get().getValue(new ResourceLocation(compound.getString("type"))));
         }
 
         public List<BlockPos> getBlocks() {
@@ -42,7 +63,7 @@ public interface IMultiBlock {
             return id;
         }
 
-        public MultiBlockType getType() {
+        public MultiBlockType<?> getType() {
             return type;
         }
 
@@ -50,26 +71,12 @@ public interface IMultiBlock {
             CompoundNBT compound = new CompoundNBT();
             compound.putInt("id", this.id);
             compound.putString("type", Objects.requireNonNull(this.type.getRegistryName()).toString());
+            compound.put("controller", NBTUtil.writeBlockPos(this.controller));
             ListNBT blockList = new ListNBT();
             blockList.addAll(this.blocks.stream().map(NBTUtil::writeBlockPos).collect(Collectors.toList()));
             compound.put("blocks", blockList);
             return compound;
         }
-
-        public static MultiBlock deserializeNBT(CompoundNBT compound) {
-            List<BlockPos> blocks = new ArrayList<>();
-            ListNBT list = compound.getList("blocks", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.size(); i++) {
-                blocks.add(i, NBTUtil.readBlockPos(list.getCompound(i)));
-            }
-            return new MultiBlock(compound.getInt("id"), blocks, Registries.MULTI_BLOCK_TYPE.get().getValue(new ResourceLocation(compound.getString("type"))));
-        }
     }
-
-    Collection<MultiBlock> getMultiBlocks();
-    MultiBlock getMultiBlockById(int id);
-    void setMultiBlock(int id, MultiBlock multiBlock);
-    void removeMultiBlock(int id);
-    void clear();
 
 }
