@@ -28,9 +28,10 @@ public interface IMultiBlock {
         return this.getMultiBlocks().stream().max(Comparator.comparingInt(multiBlock -> multiBlock.id)).map(MultiBlock::getId).orElse(-1) + 1;
     }
 
-    default void addMultiBlock(BlockPos controller, List<BlockPos> blocks, MultiBlockType type) {
+    default int addMultiBlock(BlockPos controller, List<BlockPos> blocks, MultiBlockType type) {
         int id = this.getAvailableId();
         this.setMultiBlock(id, new MultiBlock(id, blocks, controller, type));
+        return id;
     }
 
     class MultiBlock {

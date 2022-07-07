@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ThermalTankFrame extends ContainerBlock {
@@ -80,13 +81,26 @@ public class ThermalTankFrame extends ContainerBlock {
                 BlockPos neighbor = pos.relative(direction);
                 TileEntity neighborTe = world.getBlockEntity(neighbor);
                 if (neighborTe != null) {
-                    neighborTe.getCapability(Capabilities.MULTI_BLOCK_COMPONENT_CAPABILITY).ifPresent(mbComponent -> isAttachedToStructure.set(true));
+                    neighborTe.getCapability(Capabilities.MULTI_BLOCK_COMPONENT_CAPABILITY).ifPresent(mbComponent -> {
+                        if (mbComponent.getId() != -1) {
+                            isAttachedToStructure.set(true);
+                        }
+                    });
                 }
             }
             if (isAttachedToStructure.get()) {
                 world.destroyBlock(pos, true);
             } else {
-                MultiBlocks.THERMAL_TANK.get().isStructureValid(world, pos).ifPresent(result -> world.getCapability(Capabilities.MULTI_BLOCK_CAPABILITY).ifPresent(multiBlockRecorder -> multiBlockRecorder.addMultiBlock(result.controller, result.blocks, MultiBlocks.THERMAL_TANK.get())));
+                MultiBlocks.THERMAL_TANK.get().isStructureValid(world, pos).ifPresent(result -> world.getCapability(Capabilities.MULTI_BLOCK_CAPABILITY).ifPresent(multiBlockRecorder -> {
+                    int id = multiBlockRecorder.addMultiBlock(result.controller, result.blocks, MultiBlocks.THERMAL_TANK.get());
+                    result.blocks.forEach(blockPos -> {
+                        BaseTile tile = (BaseTile) world.getBlockEntity(blockPos);
+                        if (tile != null) {
+                            tile.getCapability(Capabilities.MULTI_BLOCK_COMPONENT_CAPABILITY).ifPresent(multiBlockComponent -> multiBlockComponent.setId(id));
+                            tile.notifyClient();
+                        }
+                    });
+                }));
             }
         }
     }

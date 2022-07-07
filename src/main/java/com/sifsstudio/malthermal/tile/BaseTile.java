@@ -38,6 +38,7 @@ public abstract class BaseTile extends TileEntity {
             if (this.level != null && !this.level.isClientSide) {
                 BlockState state = this.getBlockState();
                 this.level.sendBlockUpdated(this.worldPosition, state, state, Constants.BlockFlags.BLOCK_UPDATE);
+                this.setChanged();
             }
         }
     }
