@@ -28,7 +28,7 @@ public interface IMultiBlock {
         return this.getMultiBlocks().stream().max(Comparator.comparingInt(multiBlock -> multiBlock.id)).map(MultiBlock::getId).orElse(-1) + 1;
     }
 
-    default void addMultiBlock(BlockPos controller, List<BlockPos> blocks, MultiBlockType<?> type) {
+    default void addMultiBlock(BlockPos controller, List<BlockPos> blocks, MultiBlockType type) {
         int id = this.getAvailableId();
         this.setMultiBlock(id, new MultiBlock(id, blocks, controller, type));
     }
@@ -37,9 +37,9 @@ public interface IMultiBlock {
         private final int id;
         private final List<BlockPos> blocks;
         private final BlockPos controller;
-        private final MultiBlockType<?> type;
+        private final MultiBlockType type;
 
-        private MultiBlock(int id, List<BlockPos> blocks, BlockPos controller, MultiBlockType<?> type) {
+        private MultiBlock(int id, List<BlockPos> blocks, BlockPos controller, MultiBlockType type) {
             this.id = id;
             this.blocks = blocks;
             this.controller = controller;
@@ -63,7 +63,7 @@ public interface IMultiBlock {
             return id;
         }
 
-        public MultiBlockType<?> getType() {
+        public MultiBlockType getType() {
             return type;
         }
 

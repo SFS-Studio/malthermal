@@ -6,6 +6,10 @@ import net.minecraftforge.fml.RegistryObject;
 
 public class MultiBlocks {
 
-    public static RegistryObject<MultiBlockType<ThermalTank.ScanResult>> THERMAL_TANK = Registries.MULTI_BLOCK_TYPE_DEFERRED_REGISTER.register("thermal_tank", ThermalTank::new);
+    public static final RegistryObject<MultiBlockType> THERMAL_TANK = Registries.MULTI_BLOCK_TYPE_DEFERRED_REGISTER.register("thermal_tank", ThermalTank::new);
+
+    public static void init() {
+        /* Place Holder */
+    }
 
 }
