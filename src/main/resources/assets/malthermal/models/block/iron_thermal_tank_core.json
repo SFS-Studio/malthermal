@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "malthermal:block/iron_thermal_tank_core"
+  }
+}

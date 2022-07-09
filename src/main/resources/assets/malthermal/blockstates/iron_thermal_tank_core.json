@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "malthermal:block/iron_thermal_tank_core"
+    }
+  }
+}
