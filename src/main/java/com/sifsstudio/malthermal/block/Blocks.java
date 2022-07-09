@@ -17,7 +17,7 @@ public class Blocks {
 
     public static final RegistryObject<Block> THERMAL_TANK_FRAME = registerWithItem("thermal_tank_frame", ThermalTankFrame::new);
     public static final RegistryObject<Block> IRON_THERMAL_TANK_CORE = registerWithItem("iron_thermal_tank_core", IronThermalTankCore::new);
-    public static final RegistryObject<Block> THERMAL_GLASS = registerWithItem("thermal_glass", ThermalGlassBlock::new);
+    public static final RegistryObject<Block> THERMAL_GLASS = registerWithItem("thermal_glass", ThermalGlass::new);
 
     public static void hook(IEventBus bus) {
         BLOCKS.register(bus);

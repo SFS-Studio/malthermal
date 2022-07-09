@@ -4,18 +4,20 @@ import com.sifsstudio.malthermal.capability.Capabilities;
 import com.sifsstudio.malthermal.capability.IMultiBlock;
 import com.sifsstudio.malthermal.multiblock.MultiBlocks;
 import com.sifsstudio.malthermal.tile.BaseTile;
-import com.sifsstudio.malthermal.tile.ThermalTankFrameTile;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
+import com.sifsstudio.malthermal.tile.ThermalGlassTile;
+import com.sifsstudio.malthermal.util.Utilities;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,22 +25,42 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ThermalTankFrame extends ContainerBlock {
-    public ThermalTankFrame() {
-        super(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_GRAY).isValidSpawn((state, world, pos, entity) -> false));
+public class ThermalGlass extends ContainerBlock {
+
+    protected ThermalGlass() {
+        super(AbstractBlock.Properties.of(Material.GLASS).sound(SoundType.GLASS).noOcclusion().isValidSpawn(Utilities::neverSpawn).isRedstoneConductor(Utilities::neverDo).isSuffocating(Utilities::neverDo).isViewBlocking(Utilities::neverDo));
     }
 
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public BlockRenderType getRenderShape(@Nonnull BlockState blockState) {
+    public BlockRenderType getRenderShape(@Nonnull BlockState pState) {
         return BlockRenderType.MODEL;
     }
 
-    @Nullable
+    @SuppressWarnings("deprecation")
+    @Nonnull
     @Override
-    public TileEntity newBlockEntity(@Nonnull IBlockReader world) {
-        return new ThermalTankFrameTile();
+    public VoxelShape getVisualShape(@Nonnull BlockState pState, @Nonnull IBlockReader pReader, @Nonnull BlockPos pPos, @Nonnull ISelectionContext pContext) {
+        return VoxelShapes.empty();
+    }
+
+    @SuppressWarnings("deprecation")
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public float getShadeBrightness(@Nonnull BlockState pState, @Nonnull IBlockReader pLevel, @Nonnull BlockPos pPos) {
+        return 1.0F;
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(@Nonnull BlockState pState, @Nonnull IBlockReader pReader, @Nonnull BlockPos pPos) {
+        return true;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean skipRendering(@Nonnull BlockState pState, @Nonnull BlockState pAdjacentBlockState, @Nonnull Direction pSide) {
+        return pAdjacentBlockState.is(this) || super.skipRendering(pState, pAdjacentBlockState, pSide);
     }
 
     @SuppressWarnings("deprecation")
@@ -107,5 +129,11 @@ public class ThermalTankFrame extends ContainerBlock {
                 }));
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public TileEntity newBlockEntity(@Nonnull IBlockReader world) {
+        return new ThermalGlassTile();
     }
 }

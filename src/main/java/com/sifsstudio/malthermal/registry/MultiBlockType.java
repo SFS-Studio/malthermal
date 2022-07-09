@@ -7,9 +7,10 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class MultiBlockType extends ForgeRegistryEntry<MultiBlockType> {
-    public abstract Optional<ScanResult> isStructureValid(World world, BlockPos trigger);
+    public abstract Optional<ScanResult> isStructureValid(World world, BlockPos trigger, Set<BlockPos> exclusive);
 
     public static class ScanResult {
         public final List<BlockPos> blocks;

@@ -7,12 +7,17 @@ import com.sifsstudio.malthermal.tile.BaseTile;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractThermalTankCore extends ContainerBlock {
@@ -57,9 +62,8 @@ public abstract class AbstractThermalTankCore extends ContainerBlock {
         super.onRemove(oldState, world, pos, newState, isMoving);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void onPlace(@Nonnull BlockState newState, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving) {
+    public void setPlacedBy(World world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable LivingEntity pPlacer, @Nonnull ItemStack stack) {
         if (!world.isClientSide) {
             AtomicBoolean isAttachedToStructure = new AtomicBoolean(false);
             for (Direction direction : Direction.values()) {
@@ -76,7 +80,7 @@ public abstract class AbstractThermalTankCore extends ContainerBlock {
             if (isAttachedToStructure.get()) {
                 world.destroyBlock(pos, true);
             } else {
-                MultiBlocks.THERMAL_TANK.get().isStructureValid(world, pos).ifPresent(result -> world.getCapability(Capabilities.MULTI_BLOCK_CAPABILITY).ifPresent(multiBlockRecorder -> {
+                MultiBlocks.THERMAL_TANK.get().isStructureValid(world, pos, new HashSet<>()).ifPresent(result -> world.getCapability(Capabilities.MULTI_BLOCK_CAPABILITY).ifPresent(multiBlockRecorder -> {
                     int id = multiBlockRecorder.addMultiBlock(result.controller, result.blocks, MultiBlocks.THERMAL_TANK.get());
                     result.blocks.forEach(blockPos -> {
                         BaseTile tile = (BaseTile) world.getBlockEntity(blockPos);

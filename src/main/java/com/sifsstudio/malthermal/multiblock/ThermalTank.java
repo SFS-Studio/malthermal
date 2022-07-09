@@ -1,6 +1,7 @@
 package com.sifsstudio.malthermal.multiblock;
 
 import com.sifsstudio.malthermal.block.AbstractThermalTankCore;
+import com.sifsstudio.malthermal.block.ThermalGlass;
 import com.sifsstudio.malthermal.block.ThermalTankFrame;
 import com.sifsstudio.malthermal.registry.MultiBlockType;
 import com.sifsstudio.malthermal.util.Utilities;
@@ -14,7 +15,7 @@ import java.util.*;
 
 public class ThermalTank extends MultiBlockType {
     @Override
-    public Optional<ScanResult> isStructureValid(World world, BlockPos trigger) {
+    public Optional<ScanResult> isStructureValid(World world, BlockPos trigger, Set<BlockPos> exclusive) {
         HashSet<BlockPos> scannedBlock = new HashSet<>();
         Queue<BlockPos> blockToScan = new LinkedList<>();
         blockToScan.add(trigger);
@@ -22,7 +23,7 @@ public class ThermalTank extends MultiBlockType {
         while (!blockToScan.isEmpty()) {
             BlockPos next = blockToScan.remove();
             Block block = world.getBlockState(next).getBlock();
-            if (block instanceof AbstractThermalTankCore) {
+            if (block instanceof AbstractThermalTankCore && !exclusive.contains(next)) {
                 if (controller == null) {
                     controller = next;
                 } else {
@@ -36,17 +37,18 @@ public class ThermalTank extends MultiBlockType {
             for (Direction direction : Direction.values()) {
                 BlockPos relative = next.relative(direction);
                 Block relativeBlock = world.getBlockState(relative).getBlock();
-                if (!scannedBlock.contains(relative) && (relativeBlock instanceof AbstractThermalTankCore || relativeBlock instanceof ThermalTankFrame)) {
+                if (!scannedBlock.contains(relative) && (relativeBlock instanceof AbstractThermalTankCore || relativeBlock instanceof ThermalTankFrame || relativeBlock instanceof ThermalGlass)) {
                     blockToScan.add(relative);
                 }
             }
         }
+        scannedBlock.removeAll(exclusive);
         if (controller == null) {
             return Optional.empty();
         }
         Utilities.Stats<BlockPos> stats = scannedBlock.stream().collect(Utilities.Stats.collector());
-        Vector3i extent = stats.getMax().subtract(stats.getMin());
-        if (stats.getCount() != 6 * (extent.getX() - 2) * (extent.getY() - 2) * (extent.getZ() - 2) + 4 * (extent.getX() + extent.getY() + extent.getZ() - 4)) {
+        Vector3i extent = stats.getMax().subtract(stats.getMin()).offset(1, 1, 1);
+        if (stats.getCount() != 2 * ((extent.getX() - 2) * (extent.getY() - 2) + (extent.getY() - 2) * (extent.getZ() - 2) + (extent.getX() - 2) * (extent.getZ() - 2)) + 4 * (extent.getX() + extent.getY() + extent.getZ() - 4)) {
             return Optional.empty();
         }
         for (BlockPos pos : scannedBlock) {
