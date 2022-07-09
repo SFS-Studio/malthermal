@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "malthermal:block/thermal_glass"
+    }
+  }
+}
