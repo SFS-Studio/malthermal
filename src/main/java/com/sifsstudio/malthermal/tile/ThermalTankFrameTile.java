@@ -2,6 +2,7 @@ package com.sifsstudio.malthermal.tile;
 
 import com.sifsstudio.malthermal.capability.Capabilities;
 import com.sifsstudio.malthermal.capability.IMultiBlockComponent;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -38,20 +39,21 @@ public class ThermalTankFrameTile extends BaseTile {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT compound = super.serializeNBT();
+    public void load(@Nonnull BlockState pState, @Nonnull CompoundNBT pCompound) {
+        super.load(pState, pCompound);
+        this.structureId = pCompound.getInt("structureId");
+    }
+
+    @Nonnull
+    @Override
+    public CompoundNBT save(@Nonnull CompoundNBT pCompound) {
+        CompoundNBT compound = super.save(pCompound);
         compound.putInt("structureId", this.structureId);
         return compound;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        this.structureId = nbt.getInt("structureId");
-        super.deserializeNBT(nbt);
-    }
-
-    @Override
     public boolean isNetwork() {
-        return true;
+        return false;
     }
 }

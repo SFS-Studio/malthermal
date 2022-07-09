@@ -19,7 +19,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ThermalTankFrame extends ContainerBlock {
@@ -27,6 +26,7 @@ public class ThermalTankFrame extends ContainerBlock {
         super(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_GRAY).isValidSpawn((state, world, pos, entity) -> false));
     }
 
+    @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public BlockRenderType getRenderShape(@Nonnull BlockState blockState) {
@@ -56,7 +56,7 @@ public class ThermalTankFrame extends ContainerBlock {
                                         posTe.getCapability(Capabilities.MULTI_BLOCK_COMPONENT_CAPABILITY).ifPresent(posComponent -> {
                                             posComponent.setId(-1);
                                             BaseTile basePosTe = (BaseTile) posTe;
-                                            basePosTe.notifyClient();
+                                            basePosTe.notifyChanged();
                                         });
                                     }
                                 });
@@ -97,7 +97,7 @@ public class ThermalTankFrame extends ContainerBlock {
                         BaseTile tile = (BaseTile) world.getBlockEntity(blockPos);
                         if (tile != null) {
                             tile.getCapability(Capabilities.MULTI_BLOCK_COMPONENT_CAPABILITY).ifPresent(multiBlockComponent -> multiBlockComponent.setId(id));
-                            tile.notifyClient();
+                            tile.notifyChanged();
                         }
                     });
                 }));
