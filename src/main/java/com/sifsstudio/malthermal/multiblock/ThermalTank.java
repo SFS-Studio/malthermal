@@ -22,6 +22,9 @@ public class ThermalTank extends MultiBlockType {
         BlockPos controller = null;
         while (!blockToScan.isEmpty()) {
             BlockPos next = blockToScan.remove();
+            if (scannedBlock.contains(next)) {
+                continue;
+            }
             Block block = world.getBlockState(next).getBlock();
             if (block instanceof AbstractThermalTankCore && !exclusive.contains(next)) {
                 if (controller == null) {
